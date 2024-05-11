@@ -1,6 +1,6 @@
-package dev.sushigumi.milkyway.database.projections;
+package dev.sushigumi.milkyway.core.database.projections;
 
-import dev.sushigumi.milkyway.database.entities.TestPlan;
+import dev.sushigumi.milkyway.core.database.entities.TestPlan;
 import io.quarkus.mongodb.panache.common.ProjectionFor;
 import org.bson.types.ObjectId;
 

@@ -1,7 +1,7 @@
-package dev.sushigumi.milkyway.database;
+package dev.sushigumi.milkyway.core.database;
 
-import dev.sushigumi.milkyway.database.entities.TestPlan;
-import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
+import dev.sushigumi.milkyway.core.database.entities.TestPlan;
+import dev.sushigumi.milkyway.core.database.projections.TestPlanSummary;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;

@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
     implementation("io.quarkus:quarkus-mongodb-panache")
+    implementation("io.quarkus:quarkus-kubernetes-client")
 }

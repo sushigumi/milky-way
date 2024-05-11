@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ls
+spec:
+  template:
+    spec:
+      containers:
+        - name: ls
+          image: alpine:3.19.1
+          command: ["ls", "/"]
+      restartPolicy: Never
+  backoffLimit: 4

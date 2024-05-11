@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sushigumi.milkyway.database.TestPlanRepository;
-import dev.sushigumi.milkyway.database.entities.TestPlan;
-import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
+import dev.sushigumi.milkyway.core.database.TestPlanRepository;
+import dev.sushigumi.milkyway.core.database.entities.TestPlan;
+import dev.sushigumi.milkyway.core.database.projections.TestPlanSummary;
 import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -61,8 +61,8 @@ class TestPlanResourceTest {
     final var testPlan2 = new TestPlan();
     testPlan2.name = "dummy test plan 2";
     testPlan2.tests = new ArrayList<>();
-    testPlan2.baselineConfiguration = new HashMap<>();
-    testPlan2.candidateConfiguration = new HashMap<>();
+    testPlan2.baselineProperties = new HashMap<>();
+    testPlan2.candidateProperties = new HashMap<>();
     testPlanRepository.persistOrUpdate(testPlan2);
 
     when()
@@ -139,8 +139,8 @@ class TestPlanResourceTest {
     final var testPlan = new TestPlan();
     testPlan.name = "dummy test plan";
     testPlan.tests = new ArrayList<>();
-    testPlan.baselineConfiguration = new HashMap<>();
-    testPlan.candidateConfiguration = new HashMap<>();
+    testPlan.baselineProperties = new HashMap<>();
+    testPlan.candidateProperties = new HashMap<>();
 
     return testPlan;
   }

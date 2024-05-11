@@ -1,4 +1,4 @@
-package dev.sushigumi.milkyway.database.entities;
+package dev.sushigumi.milkyway.core.database.entities;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import java.util.List;
@@ -10,6 +10,6 @@ public class TestPlan {
   public ObjectId id;
   public String name;
   public List<Test> tests;
-  public Map<String, String> baselineConfiguration;
-  public Map<String, String> candidateConfiguration;
+  public Map<String, String> baselineProperties;
+  public Map<String, String> candidateProperties;
 }

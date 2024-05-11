@@ -1,8 +1,8 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.database.TestPlanRepository;
-import dev.sushigumi.milkyway.database.entities.TestPlan;
-import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
+import dev.sushigumi.milkyway.core.database.TestPlanRepository;
+import dev.sushigumi.milkyway.core.database.entities.TestPlan;
+import dev.sushigumi.milkyway.core.database.projections.TestPlanSummary;
 import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
 import jakarta.ws.rs.*;
 import java.util.List;

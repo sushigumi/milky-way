@@ -1,4 +1,4 @@
-package dev.sushigumi.milkyway.database.entities;
+package dev.sushigumi.milkyway.core.database.entities;
 
 public enum TestStatus {
   PENDING,
