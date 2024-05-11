@@ -1,6 +1,15 @@
-apiVersion: dev.sushigumi/v1alpha1
+apiVersion: sushigumi.dev/v1alpha1
 kind: TestGroup
-name: simple-test-group
-tests:
-  - name: test1
-    apiVersion: batch/v1
+metadata:
+  name: dummy-test-group
+spec:
+  tests:
+    - name: simple-ls
+      mainContainer: alpine
+      template:
+        spec:
+          containers:
+            - name: alpine
+              image: alpine:3.19.1
+              command: ['ls']
+              args: ['/']

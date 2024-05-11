@@ -48,7 +48,7 @@ public class TestGroupCustomResourceTest {
             .load(getClass().getClassLoader().getResourceAsStream("testgroup.yaml"))
             .item();
     TestGroup testGroupCrd = testGroupClient.resource(testGroup).create();
-    assertNotNull(testGroupClient.withName("dummy-test-group"));
+    assertNotNull(testGroupClient.inNamespace("test").withName("dummy-test-group").get());
     assertEquals(1, testGroupClient.list().getItems().size());
   }
 }
