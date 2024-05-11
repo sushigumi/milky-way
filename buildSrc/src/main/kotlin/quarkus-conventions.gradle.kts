@@ -1,6 +1,5 @@
 plugins {
     id("java-conventions")
-    id("com.diffplug.spotless")
 }
 
 dependencies {
@@ -13,13 +12,3 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
 }
 
-
-spotless {
-    java {
-        googleJavaFormat()
-        removeUnusedImports()
-        formatAnnotations()
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-}

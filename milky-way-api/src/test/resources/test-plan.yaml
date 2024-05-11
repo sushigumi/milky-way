@@ -1,0 +1,6 @@
+apiVersion: dev.sushigumi/v1alpha1
+kind: TestGroup
+name: simple-test-group
+tests:
+  - name: test1
+    apiVersion: batch/v1
