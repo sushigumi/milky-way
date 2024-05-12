@@ -6,18 +6,18 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-@Path("/api/v1/groups")
-public class TestGroupResource {
+@Path("/api/v1/templates")
+public class TestTemplateResource {
   private final KubernetesService kubernetesService;
 
-  public TestGroupResource(KubernetesService kubernetesService) {
+  public TestTemplateResource(KubernetesService kubernetesService) {
     this.kubernetesService = kubernetesService;
   }
 
-  @Path("/{groupName}")
+  @Path("/{name}")
   @GET
-  public String getTestGroup(@PathParam("groupName") String groupName) {
-    String yaml = kubernetesService.getTestGroupResource(groupName);
+  public String getTestTemplate(@PathParam("name") String name) {
+    String yaml = kubernetesService.getTestTemplate(name);
     if (yaml == null) {
       throw new NotFoundException();
     }

@@ -1,6 +1,6 @@
 package dev.sushigumi.milkyway;
 
-import dev.sushigumi.milkyway.kubernetes.api.model.TestGroup;
+import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.utils.Serialization;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,8 +13,8 @@ public class KubernetesService {
     this.client = client;
   }
 
-  public String getTestGroupResource(String name) {
-    final var resource = client.resources(TestGroup.class).withName(name).get();
+  public String getTestTemplate(String name) {
+    final var resource = client.resources(TestTemplate.class).withName(name).get();
     return resource == null ? null : Serialization.asYaml(resource);
   }
 }

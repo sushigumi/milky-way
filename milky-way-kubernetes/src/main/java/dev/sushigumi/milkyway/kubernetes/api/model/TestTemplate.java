@@ -6,5 +6,5 @@ import io.fabric8.kubernetes.model.annotation.Group;
 import io.fabric8.kubernetes.model.annotation.Version;
 
 @Group("sushigumi.dev")
-@Version("v1alpha1")
-public class TestGroup extends CustomResource<TestGroupSpec, Void> implements Namespaced {}
+@Version("v1")
+public class TestTemplate extends CustomResource<TestTemplateSpec, Void> implements Namespaced {}

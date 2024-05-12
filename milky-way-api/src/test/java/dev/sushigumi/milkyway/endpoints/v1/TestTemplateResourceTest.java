@@ -2,7 +2,7 @@ package dev.sushigumi.milkyway.endpoints.v1;
 
 import static io.restassured.RestAssured.when;
 
-import dev.sushigumi.milkyway.kubernetes.api.model.TestGroup;
+import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Test;
 
 @WithKubernetesTestServer
 @QuarkusTest
-@TestHTTPEndpoint(TestGroupResource.class)
-class TestGroupResourceTest {
+@TestHTTPEndpoint(TestTemplateResource.class)
+class TestTemplateResourceTest {
   private final KubernetesClient kubernetesClient;
-  private MixedOperation<TestGroup, KubernetesResourceList<TestGroup>, Resource<TestGroup>>
+  private MixedOperation<TestTemplate, KubernetesResourceList<TestTemplate>, Resource<TestTemplate>>
       testGroupClient;
 
-  public TestGroupResourceTest(KubernetesClient kubernetesClient) {
+  public TestTemplateResourceTest(KubernetesClient kubernetesClient) {
     this.kubernetesClient = kubernetesClient;
   }
 
@@ -36,13 +36,13 @@ class TestGroupResourceTest {
             .load(
                 getClass()
                     .getClassLoader()
-                    .getResourceAsStream("META-INF/fabric8/testgroups.sushigumi.dev-v1.yml"))
+                    .getResourceAsStream("META-INF/fabric8/testtemplates.sushigumi.dev-v1.yml"))
             .item();
     var resource = kubernetesClient.apiextensions().v1().customResourceDefinitions().resource(crd);
     resource.delete();
     resource.create();
 
-    testGroupClient = kubernetesClient.resources(TestGroup.class);
+    testGroupClient = kubernetesClient.resources(TestTemplate.class);
     testGroupClient.inNamespace("asdf").delete();
   }
 
@@ -50,15 +50,15 @@ class TestGroupResourceTest {
   void shouldGetTestPlan() {
     final var testGroup =
         testGroupClient
-            .load(getClass().getClassLoader().getResourceAsStream("test-plan.yaml"))
+            .load(getClass().getClassLoader().getResourceAsStream("test-template.yaml"))
             .item();
 
     testGroupClient.resource(testGroup).create();
-    when().get("/dummy-test-group").then().assertThat().statusCode(200);
+    when().get("/dummy-test-job").then().assertThat().statusCode(200);
   }
 
   @Test
   void shouldThrowWhenTestPlanDoesNotExist() {
-    when().get("/dummy-test-group").then().assertThat().statusCode(404);
+    when().get("/dummy-test-job").then().assertThat().statusCode(404);
   }
 }

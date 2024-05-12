@@ -1,0 +1,10 @@
+apiVersion: sushigumi.dev/v1
+kind: TestTemplate
+metadata:
+  name: dummy-test-job
+spec:
+  group: group1
+  container:
+    name: alpine
+    image: alpine:3.19.1
+    command: ['ls', '/']
