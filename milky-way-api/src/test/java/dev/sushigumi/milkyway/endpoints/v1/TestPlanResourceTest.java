@@ -7,13 +7,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.sushigumi.milkyway.TestUtils;
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
 import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
 import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.kubernetes.client.WithKubernetesTestServer;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,22 +26,30 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@WithKubernetesTestServer
 @QuarkusTest
 @TestHTTPEndpoint(TestPlanResource.class)
 class TestPlanResourceTest {
   private static final TestPlan DEFAULT_TEST_PLAN = createDefaultTestPlan();
   private final TestPlanRepository testPlanRepository;
   private final ObjectMapper objectMapper;
+  private final KubernetesClient kubernetesClient;
 
-  public TestPlanResourceTest(TestPlanRepository testPlanRepository, ObjectMapper objectmapper) {
+  public TestPlanResourceTest(
+      TestPlanRepository testPlanRepository,
+      ObjectMapper objectmapper,
+      KubernetesClient kubernetesClient) {
     this.testPlanRepository = testPlanRepository;
     this.objectMapper = objectmapper;
+    this.kubernetesClient = kubernetesClient;
   }
 
   @BeforeEach
   void setup() {
     // Initialize the database with some dummy data.
     testPlanRepository.persistOrUpdate(DEFAULT_TEST_PLAN);
+    TestUtils.setupCustomResourceDefinitions(kubernetesClient);
+    TestUtils.removeAllCustomResources(kubernetesClient);
   }
 
   @AfterEach
@@ -61,8 +73,8 @@ class TestPlanResourceTest {
     final var testPlan2 = new TestPlan();
     testPlan2.name = "dummy test plan 2";
     testPlan2.tests = new ArrayList<>();
-    testPlan2.baselineConfiguration = new HashMap<>();
-    testPlan2.candidateConfiguration = new HashMap<>();
+    testPlan2.baselineEnvVars = new HashMap<>();
+    testPlan2.candidateEnvVars = new HashMap<>();
     testPlanRepository.persistOrUpdate(testPlan2);
 
     when()
@@ -108,10 +120,27 @@ class TestPlanResourceTest {
 
   @Test
   void shouldCreateTestPlan() throws JsonProcessingException {
-    final var request = new CreateTestPlanRequest("new test");
+    TestUtils.createTestTemplateCustomResource(kubernetesClient, "test-template.yaml");
+    final var request = new CreateTestPlanRequest("new test", new HashMap<>(), new HashMap<>());
     final String body = objectMapper.writeValueAsString(request);
 
-    given().contentType(ContentType.JSON).body(body).when().post().then().statusCode(204);
+    Response response =
+        given()
+            .contentType(ContentType.JSON)
+            .body(body)
+            .when()
+            .post()
+            .then()
+            .statusCode(200)
+            .extract()
+            .response();
+    String testPlanId = response.path("id");
+
+    final TestPlan testPlan = testPlanRepository.findById(new ObjectId(testPlanId));
+    assertEquals("new test", testPlan.name);
+    assertEquals(1, testPlan.tests.size());
+    assertEquals("dummy-test-job", testPlan.tests.getFirst().name);
+    assertEquals("group1", testPlan.tests.getFirst().group);
 
     final List<TestPlanSummary> summaries =
         testPlanRepository.getAllTestPlanSummariesByName("new test");
@@ -139,8 +168,8 @@ class TestPlanResourceTest {
     final var testPlan = new TestPlan();
     testPlan.name = "dummy test plan";
     testPlan.tests = new ArrayList<>();
-    testPlan.baselineConfiguration = new HashMap<>();
-    testPlan.candidateConfiguration = new HashMap<>();
+    testPlan.baselineEnvVars = new HashMap<>();
+    testPlan.candidateEnvVars = new HashMap<>();
 
     return testPlan;
   }

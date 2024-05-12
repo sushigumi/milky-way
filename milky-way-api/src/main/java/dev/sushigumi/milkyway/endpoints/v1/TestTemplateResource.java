@@ -17,7 +17,7 @@ public class TestTemplateResource {
   @Path("/{name}")
   @GET
   public String getTestTemplate(@PathParam("name") String name) {
-    String yaml = kubernetesService.getTestTemplate(name);
+    String yaml = kubernetesService.getTestTemplateAsYaml(name);
     if (yaml == null) {
       throw new NotFoundException();
     }

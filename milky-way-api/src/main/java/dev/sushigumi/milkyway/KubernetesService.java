@@ -4,6 +4,7 @@ import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.utils.Serialization;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 
 @ApplicationScoped
 public class KubernetesService {
@@ -13,8 +14,12 @@ public class KubernetesService {
     this.client = client;
   }
 
-  public String getTestTemplate(String name) {
+  public String getTestTemplateAsYaml(String name) {
     final var resource = client.resources(TestTemplate.class).withName(name).get();
     return resource == null ? null : Serialization.asYaml(resource);
+  }
+
+  public List<TestTemplate> getTestTemplates() {
+    return client.resources(TestTemplate.class).list().getItems();
   }
 }

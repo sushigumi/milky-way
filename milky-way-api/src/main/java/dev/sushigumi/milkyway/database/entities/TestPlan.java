@@ -10,6 +10,6 @@ public class TestPlan {
   public ObjectId id;
   public String name;
   public List<Test> tests;
-  public Map<String, String> baselineConfiguration;
-  public Map<String, String> candidateConfiguration;
+  public Map<String, String> baselineEnvVars;
+  public Map<String, String> candidateEnvVars;
 }

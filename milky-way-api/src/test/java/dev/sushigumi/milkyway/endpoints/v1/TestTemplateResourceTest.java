@@ -2,12 +2,8 @@ package dev.sushigumi.milkyway.endpoints.v1;
 
 import static io.restassured.RestAssured.when;
 
-import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
-import io.fabric8.kubernetes.api.model.KubernetesResourceList;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
+import dev.sushigumi.milkyway.TestUtils;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.kubernetes.client.WithKubernetesTestServer;
@@ -19,8 +15,6 @@ import org.junit.jupiter.api.Test;
 @TestHTTPEndpoint(TestTemplateResource.class)
 class TestTemplateResourceTest {
   private final KubernetesClient kubernetesClient;
-  private MixedOperation<TestTemplate, KubernetesResourceList<TestTemplate>, Resource<TestTemplate>>
-      testGroupClient;
 
   public TestTemplateResourceTest(KubernetesClient kubernetesClient) {
     this.kubernetesClient = kubernetesClient;
@@ -28,32 +22,13 @@ class TestTemplateResourceTest {
 
   @BeforeEach
   void init() {
-    CustomResourceDefinition crd =
-        kubernetesClient
-            .apiextensions()
-            .v1()
-            .customResourceDefinitions()
-            .load(
-                getClass()
-                    .getClassLoader()
-                    .getResourceAsStream("META-INF/fabric8/testtemplates.sushigumi.dev-v1.yml"))
-            .item();
-    var resource = kubernetesClient.apiextensions().v1().customResourceDefinitions().resource(crd);
-    resource.delete();
-    resource.create();
-
-    testGroupClient = kubernetesClient.resources(TestTemplate.class);
-    testGroupClient.inNamespace("asdf").delete();
+    TestUtils.setupCustomResourceDefinitions(kubernetesClient);
+    TestUtils.removeAllCustomResources(kubernetesClient);
   }
 
   @Test
   void shouldGetTestPlan() {
-    final var testGroup =
-        testGroupClient
-            .load(getClass().getClassLoader().getResourceAsStream("test-template.yaml"))
-            .item();
-
-    testGroupClient.resource(testGroup).create();
+    TestUtils.createTestTemplateCustomResource(kubernetesClient, "test-template.yaml");
     when().get("/dummy-test-job").then().assertThat().statusCode(200);
   }
 
