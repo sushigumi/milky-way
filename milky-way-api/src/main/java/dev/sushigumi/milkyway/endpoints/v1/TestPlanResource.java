@@ -1,6 +1,6 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.KubernetesService;
+import dev.sushigumi.milkyway.kubernetes.TestTemplateService;
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.entities.Test;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
@@ -19,12 +19,12 @@ import org.bson.types.ObjectId;
 @Path("/api/v1/plans")
 class TestPlanResource {
   private final TestPlanRepository testPlanRepository;
-  private final KubernetesService kubernetesService;
+  private final TestTemplateService testTemplateService;
 
   public TestPlanResource(
-      TestPlanRepository testPlanRepository, KubernetesService kubernetesService) {
+      TestPlanRepository testPlanRepository, TestTemplateService testTemplateService) {
     this.testPlanRepository = testPlanRepository;
-    this.kubernetesService = kubernetesService;
+    this.testTemplateService = testTemplateService;
   }
 
   @Path("/")
@@ -48,7 +48,7 @@ class TestPlanResource {
   @POST
   public TestPlan createTestPlan(CreateTestPlanRequest request) {
     // Get all the test templates so that we can populate them
-    final List<TestTemplate> testTemplates = kubernetesService.getTestTemplates();
+    final List<TestTemplate> testTemplates = testTemplateService.getTestTemplates();
 
     // Validate that the baseline env vars contains exactly the same properties as the candidate env
     // vars.

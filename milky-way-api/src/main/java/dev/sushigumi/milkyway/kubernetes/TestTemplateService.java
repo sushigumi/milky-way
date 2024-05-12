@@ -1,4 +1,4 @@
-package dev.sushigumi.milkyway;
+package dev.sushigumi.milkyway.kubernetes;
 
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -7,10 +7,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 @ApplicationScoped
-public class KubernetesService {
+public class TestTemplateService {
   private final KubernetesClient client;
 
-  public KubernetesService(KubernetesClient client) {
+  public TestTemplateService(KubernetesClient client) {
     this.client = client;
   }
 

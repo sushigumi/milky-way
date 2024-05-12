@@ -1,0 +1,4 @@
+quarkus:
+  kubernetes-client:
+    devservices:
+      flavor: kind
