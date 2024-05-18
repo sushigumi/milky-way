@@ -1,13 +1,14 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.kubernetes.TestTemplateService;
+import dev.sushigumi.milkyway.TestTemplateService;
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.entities.Test;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
 import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
-import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
+import dev.sushigumi.milkyway.endpoints.v1.api.TestPlanCreateRequest;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +47,7 @@ class TestPlanResource {
 
   @Path("/")
   @POST
-  public TestPlan createTestPlan(CreateTestPlanRequest request) {
+  public TestPlan createTestPlan(@Valid TestPlanCreateRequest request) {
     // Get all the test templates so that we can populate them
     final List<TestTemplate> testTemplates = testTemplateService.getTestTemplates();
 

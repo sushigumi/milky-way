@@ -1,8 +1,9 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.database.entities.Test;
-import dev.sushigumi.milkyway.database.entities.TestStatus;
-import dev.sushigumi.milkyway.kubernetes.TestExecutorService;
+import dev.sushigumi.milkyway.TestExecutorService;
+import dev.sushigumi.milkyway.endpoints.v1.api.TestExecuteRequest;
+import dev.sushigumi.milkyway.exceptions.TestStatusUpdateException;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
@@ -15,11 +16,11 @@ public class TestExecutorResource {
   }
 
   @POST
-  public void executeTest() {
-    final var test = new Test();
-    test.name = "dummy-test-job";
-    test.group = "thedog";
-    test.status = TestStatus.PENDING;
-    testExecutorService.executeTest(test);
+  public void executeTest(TestExecuteRequest request) {
+    try {
+      testExecutorService.executeTestPlan(request.getTestPlanId());
+    } catch (TestStatusUpdateException e) {
+      throw new BadRequestException();
+    }
   }
 }

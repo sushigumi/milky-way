@@ -2,18 +2,19 @@ package dev.sushigumi.milkyway.endpoints.v1.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 
-public class CreateTestPlanRequest {
+public class TestPlanCreateRequest {
   private final String name;
-  private final Map<String, String> baselineEnvVars;
-  private final Map<String, String> candidateEnvVars;
+  @NotNull private final Map<String, String> baselineEnvVars;
+  @NotNull private final Map<String, String> candidateEnvVars;
 
   @JsonCreator
-  public CreateTestPlanRequest(
+  public TestPlanCreateRequest(
       @JsonProperty("name") String name,
-      @JsonProperty("baselineProperties") Map<String, String> baselineEnvVars,
-      @JsonProperty("candidateProperties") Map<String, String> candidateEnvVars) {
+      @JsonProperty("baselineEnvVars") Map<String, String> baselineEnvVars,
+      @JsonProperty("candidateEnvVars") Map<String, String> candidateEnvVars) {
     this.name = name;
     this.baselineEnvVars = baselineEnvVars;
     this.candidateEnvVars = candidateEnvVars;

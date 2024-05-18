@@ -11,7 +11,7 @@ import dev.sushigumi.milkyway.TestUtils;
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
 import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
-import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
+import dev.sushigumi.milkyway.endpoints.v1.api.TestPlanCreateRequest;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -121,7 +121,7 @@ class TestPlanResourceTest {
   @Test
   void shouldCreateTestPlan() throws JsonProcessingException {
     TestUtils.createTestTemplateCustomResource(kubernetesClient, "test-template.yaml");
-    final var request = new CreateTestPlanRequest("new test", new HashMap<>(), new HashMap<>());
+    final var request = new TestPlanCreateRequest("new test", new HashMap<>(), new HashMap<>());
     final String body = objectMapper.writeValueAsString(request);
 
     Response response =
