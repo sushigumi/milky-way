@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 import org.bson.types.ObjectId;
 
-@MongoEntity(database = "milky-way", collection = "test-collections")
+@MongoEntity(collection = TestPlan.COLLECTION_NAME)
 public class TestPlan {
+  public static final String COLLECTION_NAME = "test-plans";
+
   public ObjectId id;
   public String name;
   public List<Test> tests;

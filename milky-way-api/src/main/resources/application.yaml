@@ -1,4 +1,6 @@
 quarkus:
+  mongodb:
+    database: milky-way
   kubernetes-client:
     devservices:
-      flavor: kind
+      flavor: k3s
