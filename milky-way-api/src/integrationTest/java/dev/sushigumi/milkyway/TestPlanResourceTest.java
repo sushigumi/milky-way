@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sushigumi.milkyway.endpoints.v1.api.TestPlanCreateRequest;
+import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
 import dev.sushigumi.milkyway.lifecycle.KubernetesTestResourceManager;
 import dev.sushigumi.milkyway.lifecycle.MongoTestResourceManager;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -46,7 +46,7 @@ public class TestPlanResourceTest {
   @Test
   void createAndDeleteTestPlans() throws JsonProcessingException {
     // Create a new test plan
-    final var request = new TestPlanCreateRequest("asdf", "test plan new");
+    final var request = new CreateTestPlanRequest("asdf", "test plan new");
     final String body = new ObjectMapper().writeValueAsString(request);
     Response response =
         given()

@@ -2,8 +2,7 @@ package dev.sushigumi.milkyway.endpoints.v1;
 
 import dev.sushigumi.milkyway.database.entities.TestPlan;
 import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
-import dev.sushigumi.milkyway.endpoints.v1.api.TestPlanCreateRequest;
-import dev.sushigumi.milkyway.operations.create.CreateTestPlanOperation;
+import dev.sushigumi.milkyway.endpoints.v1.api.CreateTestPlanRequest;
 import dev.sushigumi.milkyway.operations.delete.DeleteTestPlanOperation;
 import dev.sushigumi.milkyway.operations.read.GetTestPlanOperation;
 import dev.sushigumi.milkyway.operations.read.GetTestPlanSummariesOperation;
@@ -34,9 +33,8 @@ class TestPlanResource {
 
   @Path("/")
   @POST
-  public TestPlan createTestPlan(@Valid TestPlanCreateRequest request) {
-    return executorService.execute(
-        new CreateTestPlanOperation(request.getConfigurationId(), request.getName()));
+  public TestPlan createTestPlan(@Valid CreateTestPlanRequest request) {
+    return executorService.execute(request.toOperation());
   }
 
   @Path("/{planId}")
