@@ -3,10 +3,12 @@ package dev.sushigumi.milkyway.services;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import dev.sushigumi.milkyway.JobWatcher;
+import dev.sushigumi.milkyway.database.TestPlanConfigurationRepository;
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.TestRepository;
 import dev.sushigumi.milkyway.database.entities.Test;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
+import dev.sushigumi.milkyway.database.entities.TestPlanConfiguration;
 import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplateSpec;
@@ -32,6 +34,7 @@ public class TestService {
 
   private final TestRepository testRepository;
   private final TestPlanRepository testPlanRepository;
+  private final TestPlanConfigurationRepository testPlanConfigurationRepository;
   private final KubernetesClient k8sClient;
 
   private Watch jobWatch;
@@ -39,9 +42,11 @@ public class TestService {
   public TestService(
       TestRepository testRepository,
       TestPlanRepository testPlanRepository,
+      TestPlanConfigurationRepository testPlanConfigurationRepository,
       KubernetesClient k8sClient) {
     this.testRepository = testRepository;
     this.testPlanRepository = testPlanRepository;
+    this.testPlanConfigurationRepository = testPlanConfigurationRepository;
     this.k8sClient = k8sClient;
   }
 
@@ -91,6 +96,23 @@ public class TestService {
     return testRepository.find(query).list();
   }
 
+  /**
+   * Get a list of test plan configurations.
+   *
+   * @return The list of test plan configurations that were found. If no tests were found, the list
+   *     will be empty.
+   */
+  public List<TestPlanConfiguration> getAllTestPlanConfigurations() {
+    return testPlanConfigurationRepository.findAll().list();
+  }
+
+  /**
+   * Update the status of a single test with the specified ID.
+   *
+   * @param id The string representation of the test ID.
+   * @param newStatus The new status that the test should have.
+   * @return The newly updated test.
+   */
   public Test updateTestStatus(String id, TestStatus newStatus) {
     final Bson filter =
         Filters.and(
