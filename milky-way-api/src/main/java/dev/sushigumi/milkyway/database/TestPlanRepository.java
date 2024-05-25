@@ -11,8 +11,4 @@ public class TestPlanRepository implements PanacheMongoRepository<TestPlan> {
   public List<TestPlanSummary> getAllTestPlanSummaries() {
     return findAll().project(TestPlanSummary.class).list();
   }
-
-  public List<TestPlanSummary> getAllTestPlanSummariesByName(String name) {
-    return find("name", name).project(TestPlanSummary.class).list();
-  }
 }

@@ -11,7 +11,7 @@ public class TestPlan {
 
   public ObjectId id;
   public String name;
-  public List<Test> tests;
+  public List<ObjectId> testIds;
   public Map<String, String> baselineEnvVars;
   public Map<String, String> candidateEnvVars;
 }

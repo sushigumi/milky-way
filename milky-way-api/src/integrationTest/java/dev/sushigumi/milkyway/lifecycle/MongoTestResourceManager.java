@@ -11,9 +11,12 @@ import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public class MongoTestResourceManager
     implements QuarkusTestResourceLifecycleManager, DevServicesContext.ContextAware {
@@ -27,14 +30,29 @@ public class MongoTestResourceManager
     connectionString = properties.get("quarkus.mongodb.connection-string");
   }
 
-  private void addDocument(MongoCollection<Document> collection, String documentPath)
-      throws IOException {
+  private Document getDocument(String documentPath) throws IOException {
     try (InputStream stream = getClass().getClassLoader().getResourceAsStream(documentPath)) {
       String json =
           new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
-      Document document = Document.parse(json);
-      collection.insertOne(document);
+      return Document.parse(json);
     }
+  }
+
+  private void addTestPlan(MongoCollection<Document> collection, String documentPath)
+      throws IOException {
+    final Document document = getDocument(documentPath);
+
+    // Convert each string representation of ObjectId into ObjectId
+    List<String> testIdStrings = (List<String>) document.get("testIds");
+    List<ObjectId> testIds = new ArrayList<>(testIdStrings.size());
+    for (var testIdString : testIdStrings) {
+      ObjectId testId = new ObjectId(testIdString);
+      testIds.add(testId);
+    }
+
+    document.put("testIds", testIds);
+
+    collection.insertOne(document);
   }
 
   @Override
@@ -43,7 +61,7 @@ public class MongoTestResourceManager
       MongoDatabase database = client.getDatabase(DATABASE_NAME);
       MongoCollection<Document> testPlanCollection =
           database.getCollection(TestPlan.COLLECTION_NAME);
-      addDocument(testPlanCollection, "test-plans/1.json");
+      addTestPlan(testPlanCollection, "test-plans/1.json");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

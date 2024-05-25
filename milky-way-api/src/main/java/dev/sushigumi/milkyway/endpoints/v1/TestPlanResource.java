@@ -72,7 +72,7 @@ class TestPlanResource {
     testPlan.name = request.getName();
 
     // Create a list of tests from the templates
-    testPlan.tests =
+    testPlan.testIds =
         testTemplates.stream()
             .map(
                 template -> {
@@ -81,7 +81,7 @@ class TestPlanResource {
                   test.name = template.getMetadata().getName();
                   test.group = template.getSpec().getGroup();
 
-                  return test;
+                  return test.id;
                 })
             .toList();
 

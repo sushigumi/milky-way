@@ -1,11 +1,7 @@
 {
   "name": "test plan 1",
-  "tests": [
-    {
-      "name": "test 1",
-      "group": "group 1",
-      "status": "PENDING"
-    }
+  "testIds": [
+    "507f191e810c19729de860ea"
   ],
   "baselineEnvVars": {},
   "candidateEnvVars": {}

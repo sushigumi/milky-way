@@ -41,7 +41,7 @@ public class TestPlanResourceTest {
         .assertThat()
         .statusCode(200)
         .body("name", equalTo("test plan 1"))
-        .body("tests.size()", is(1));
+        .body("testIds.size()", is(1));
   }
 
   @Test
