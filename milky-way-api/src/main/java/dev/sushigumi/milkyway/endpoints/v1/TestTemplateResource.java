@@ -1,6 +1,6 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.TestTemplateService;
+import dev.sushigumi.milkyway.services.TestTemplateService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;

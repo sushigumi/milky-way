@@ -2,6 +2,7 @@ package dev.sushigumi.milkyway;
 
 import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.exceptions.TestStatusUpdateException;
+import dev.sushigumi.milkyway.services.TestPlanService;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobStatus;

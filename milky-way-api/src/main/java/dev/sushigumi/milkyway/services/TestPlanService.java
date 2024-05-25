@@ -1,4 +1,4 @@
-package dev.sushigumi.milkyway;
+package dev.sushigumi.milkyway.services;
 
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.entities.TestPlan;

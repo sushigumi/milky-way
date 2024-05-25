@@ -1,5 +1,6 @@
-package dev.sushigumi.milkyway;
+package dev.sushigumi.milkyway.services;
 
+import dev.sushigumi.milkyway.JobWatcher;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
 import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.exceptions.TestStatusUpdateException;

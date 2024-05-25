@@ -1,4 +1,4 @@
-package dev.sushigumi.milkyway;
+package dev.sushigumi.milkyway.services;
 
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import io.fabric8.kubernetes.client.KubernetesClient;

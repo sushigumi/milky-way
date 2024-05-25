@@ -1,8 +1,8 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.TestExecutorService;
 import dev.sushigumi.milkyway.endpoints.v1.api.TestExecuteRequest;
 import dev.sushigumi.milkyway.exceptions.TestStatusUpdateException;
+import dev.sushigumi.milkyway.services.TestExecutorService;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

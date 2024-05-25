@@ -1,6 +1,5 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.TestTemplateService;
 import dev.sushigumi.milkyway.database.TestPlanRepository;
 import dev.sushigumi.milkyway.database.entities.Test;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
@@ -8,6 +7,7 @@ import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
 import dev.sushigumi.milkyway.endpoints.v1.api.TestPlanCreateRequest;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
+import dev.sushigumi.milkyway.services.TestTemplateService;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import java.util.Arrays;
