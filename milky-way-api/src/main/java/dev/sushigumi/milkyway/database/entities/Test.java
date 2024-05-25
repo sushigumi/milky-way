@@ -9,6 +9,5 @@ public class Test {
 
   public ObjectId id;
   public String name;
-  public String group;
   public TestStatus status;
 }

@@ -1,12 +1,10 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
-import dev.sushigumi.milkyway.database.TestPlanRepository;
-import dev.sushigumi.milkyway.database.entities.Test;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
-import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
 import dev.sushigumi.milkyway.endpoints.v1.api.TestPlanCreateRequest;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
+import dev.sushigumi.milkyway.services.TestService;
 import dev.sushigumi.milkyway.services.TestTemplateService;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -15,29 +13,27 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.bson.types.ObjectId;
 
 @Path("/api/v1/plans")
 class TestPlanResource {
-  private final TestPlanRepository testPlanRepository;
+  private final TestService testService;
   private final TestTemplateService testTemplateService;
 
-  public TestPlanResource(
-      TestPlanRepository testPlanRepository, TestTemplateService testTemplateService) {
-    this.testPlanRepository = testPlanRepository;
+  public TestPlanResource(TestService testService, TestTemplateService testTemplateService) {
+    this.testService = testService;
     this.testTemplateService = testTemplateService;
   }
 
   @Path("/")
   @GET
   public List<TestPlanSummary> getTestPlanSummaries() {
-    return testPlanRepository.getAllTestPlanSummaries();
+    return testService.getAllTestPlanSummaries();
   }
 
   @Path("/{planId}")
   @GET
-  public TestPlan getTestPlan(@PathParam("planId") ObjectId planId) {
-    final TestPlan testPlan = testPlanRepository.findById(planId);
+  public TestPlan getTestPlan(@PathParam("planId") String planId) {
+    final TestPlan testPlan = testService.getTestPlanById(planId);
     if (testPlan == null) {
       throw new NotFoundException();
     }
@@ -68,39 +64,17 @@ class TestPlanResource {
       throw new BadRequestException("Required env vars are not present.");
     }
 
-    final var testPlan = new TestPlan();
-    testPlan.name = request.getName();
-
-    // Create a list of tests from the templates
-    testPlan.testIds =
-        testTemplates.stream()
-            .map(
-                template -> {
-                  final var test = new Test();
-                  test.status = TestStatus.PENDING;
-                  test.name = template.getMetadata().getName();
-                  test.group = template.getSpec().getGroup();
-
-                  return test.id;
-                })
-            .toList();
-
-    testPlan.baselineEnvVars = request.getBaselineEnvVars();
-    testPlan.candidateEnvVars = request.getCandidateEnvVars();
-
-    try {
-      testPlanRepository.persist(testPlan);
-    } catch (Exception e) {
-      throw new BadRequestException("Unable to create new test plan.", e);
-    }
-
-    return testPlan;
+    return testService.createTestPlan(
+        request.getConfigurationId(),
+        request.getName(),
+        request.getBaselineEnvVars(),
+        request.getCandidateEnvVars());
   }
 
   @Path("/{planId}")
   @DELETE
-  public void deleteTestPlan(@PathParam("planId") ObjectId planId) {
-    boolean success = testPlanRepository.deleteById(planId);
+  public void deleteTestPlan(@PathParam("planId") String planId) {
+    boolean success = testService.deleteTestPlanById(planId);
     if (!success) {
       throw new BadRequestException(
           "Unable to delete the test plan. An error occurred or the test plan doesn't exist.");

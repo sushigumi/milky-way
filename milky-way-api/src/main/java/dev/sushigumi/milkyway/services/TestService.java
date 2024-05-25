@@ -10,6 +10,7 @@ import dev.sushigumi.milkyway.database.entities.Test;
 import dev.sushigumi.milkyway.database.entities.TestPlan;
 import dev.sushigumi.milkyway.database.entities.TestPlanConfiguration;
 import dev.sushigumi.milkyway.database.entities.TestStatus;
+import dev.sushigumi.milkyway.database.projections.TestPlanSummary;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplateSpec;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
@@ -19,6 +20,8 @@ import io.fabric8.kubernetes.client.Watch;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +87,14 @@ public class TestService {
     return testPlanRepository.findById(new ObjectId(id));
   }
 
+  public List<TestPlanSummary> getAllTestPlanSummaries() {
+    return testPlanRepository.getAllTestPlanSummaries();
+  }
+
+  public boolean deleteTestPlanById(String id) {
+    return testPlanRepository.deleteById(new ObjectId(id));
+  }
+
   /**
    * Get a list of tests that belong to a test plan with the specified ID.
    *
@@ -119,6 +130,41 @@ public class TestService {
             Filters.eq("_id", new ObjectId(id)), Filters.eq("status", TestStatus.PENDING.name()));
     final Bson updates = Updates.set("status", newStatus.name());
     return testRepository.mongoCollection().findOneAndUpdate(filter, updates);
+  }
+
+  @Transactional
+  public TestPlan createTestPlan(
+      String configurationId,
+      String name,
+      Map<String, String> baselineEnvVars,
+      Map<String, String> candidateEnvVars) {
+    final TestPlanConfiguration configuration =
+        testPlanConfigurationRepository.findById(new ObjectId(configurationId));
+    if (configuration == null) {
+      return null;
+    }
+
+    // Create a test for each of the templates in the configuration and persist to database.
+    List<ObjectId> testIds = new ArrayList<>(configuration.testTemplates.size());
+    for (var template : configuration.testTemplates) {
+      final var test = new Test();
+      test.name = template;
+      test.status = TestStatus.PENDING;
+
+      testRepository.persist(test);
+      testIds.add(test.id);
+    }
+
+    // Create the test plan and persist it to database.
+    final var testPlan = new TestPlan();
+    testPlan.name = name;
+    testPlan.testIds = testIds;
+    testPlan.baselineEnvVars = baselineEnvVars;
+    testPlan.candidateEnvVars = candidateEnvVars;
+
+    testPlanRepository.persist(testPlan);
+
+    return testPlan;
   }
 
   private void submitJob(String testId, TestTemplate template) {
