@@ -1,22 +1,24 @@
-package dev.sushigumi.milkyway;
+package dev.sushigumi.milkyway.services;
 
 import dev.sushigumi.milkyway.database.entities.TestStatus;
-import dev.sushigumi.milkyway.services.TestService;
+import dev.sushigumi.milkyway.operations.update.UpdateTestStatusOperation;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobStatus;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.WatcherException;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JobWatcher implements Watcher<Job> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(JobWatcher.class);
+@ApplicationScoped
+public class JobWatcherService implements Watcher<Job> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(JobWatcherService.class);
 
-  private final TestService testService;
+  private final OperationExecutorService executorService;
 
-  public JobWatcher(TestService testService) {
-    this.testService = testService;
+  public JobWatcherService(OperationExecutorService executorService) {
+    this.executorService = executorService;
   }
 
   private int getPodCount(Integer value) {
@@ -47,9 +49,9 @@ public class JobWatcher implements Watcher<Job> {
 
     // Update the status of the test.
     if (failedPods > 0) {
-      testService.updateTestStatus(testId, TestStatus.FAILED);
+      executorService.execute(new UpdateTestStatusOperation(testId, TestStatus.FAILED));
     } else {
-      testService.updateTestStatus(testId, TestStatus.SUCCESS);
+      executorService.execute(new UpdateTestStatusOperation(testId, TestStatus.SUCCESS));
     }
   }
 

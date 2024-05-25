@@ -14,7 +14,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 
 @QuarkusIntegrationTest
@@ -47,8 +46,7 @@ public class TestPlanResourceTest {
   @Test
   void createAndDeleteTestPlans() throws JsonProcessingException {
     // Create a new test plan
-    final var request =
-        new TestPlanCreateRequest("test plan new", new HashMap<>(), new HashMap<>());
+    final var request = new TestPlanCreateRequest("asdf", "test plan new");
     final String body = new ObjectMapper().writeValueAsString(request);
     Response response =
         given()
