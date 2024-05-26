@@ -1,0 +1,7 @@
+apiVersion: sushigumi.dev/v1
+kind: TestPlanTemplate
+metadata:
+  name: test-plan-template-1
+spec:
+  testTemplates:
+    - test-template-1

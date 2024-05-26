@@ -1,5 +1,6 @@
 package dev.sushigumi.milkyway.lifecycle;
 
+import dev.sushigumi.milkyway.kubernetes.api.model.TestPlanTemplate;
 import dev.sushigumi.milkyway.kubernetes.api.model.TestTemplate;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.Config;
@@ -15,7 +16,10 @@ public class KubernetesTestResourceManager
     implements QuarkusTestResourceLifecycleManager, DevServicesContext.ContextAware {
   public static final String TEST_TEMPLATES_CRD =
       "META-INF/fabric8/testtemplates.sushigumi.dev-v1.yml";
+  public static final String TEST_PLAN_TEMPLATES_CRD =
+      "META-INF/fabric8/testplantemplates.sushigumi.dev-v1.yaml";
   public static final String TEST_TEMPLATE = "test-templates/1.yaml";
+  public static final String TEST_PLAN_TEMPLATE = "test-plan-templates/1.yaml";
 
   private String clientKeyAlgo;
   private String apiServerUrl;
@@ -35,6 +39,15 @@ public class KubernetesTestResourceManager
     namespace = properties.get("quarkus.kubernetes-client.namespace");
   }
 
+  private void createCrd(KubernetesClient client, String path) {
+    InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
+    CustomResourceDefinition crd =
+        client.apiextensions().v1().customResourceDefinitions().load(stream).item();
+    var crdResource = client.apiextensions().v1().customResourceDefinitions().resource(crd);
+    crdResource.delete();
+    crdResource.create();
+  }
+
   private void createTestTemplate(KubernetesClient client, String path) {
     final var op = client.resources(TestTemplate.class);
     final var template = op.load(getClass().getClassLoader().getResourceAsStream(path)).item();
@@ -43,17 +56,24 @@ public class KubernetesTestResourceManager
     resource.create();
   }
 
+  private void createTestPlanTemplate(KubernetesClient client, String path) {
+    final var op = client.resources(TestPlanTemplate.class);
+    final var template = op.load(getClass().getClassLoader().getResourceAsStream(path)).item();
+    final var resource = op.resource(template);
+    resource.delete();
+    resource.create();
+  }
+
   private void initializeKubernetesCluster(KubernetesClient client) {
     // Add the CRD.
-    InputStream stream = getClass().getClassLoader().getResourceAsStream(TEST_TEMPLATES_CRD);
-    CustomResourceDefinition crd =
-        client.apiextensions().v1().customResourceDefinitions().load(stream).item();
-    var crdResource = client.apiextensions().v1().customResourceDefinitions().resource(crd);
-    crdResource.delete();
-    crdResource.create();
+    createCrd(client, TEST_TEMPLATES_CRD);
+    createCrd(client, TEST_PLAN_TEMPLATES_CRD);
 
-    // Add a dummy test template
+    // Add dummy test templates
     createTestTemplate(client, TEST_TEMPLATE);
+
+    // Add dummy test plan templates
+    createTestPlanTemplate(client, TEST_PLAN_TEMPLATE);
   }
 
   @Override

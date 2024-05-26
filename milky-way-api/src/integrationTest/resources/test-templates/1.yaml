@@ -1,7 +1,7 @@
 apiVersion: sushigumi.dev/v1
 kind: TestTemplate
 metadata:
-  name: dummy-test-job
+  name: test-template-1
 spec:
   group: group1
   container:
