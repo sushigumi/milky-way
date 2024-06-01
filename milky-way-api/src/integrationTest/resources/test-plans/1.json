@@ -2,7 +2,5 @@
   "name": "test plan 1",
   "testIds": [
     "507f191e810c19729de860ea"
-  ],
-  "baselineEnvVars": {},
-  "candidateEnvVars": {}
+  ]
 }

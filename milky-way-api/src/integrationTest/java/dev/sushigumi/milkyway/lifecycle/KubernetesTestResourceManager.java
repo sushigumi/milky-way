@@ -17,7 +17,7 @@ public class KubernetesTestResourceManager
   public static final String TEST_TEMPLATES_CRD =
       "META-INF/fabric8/testtemplates.sushigumi.dev-v1.yml";
   public static final String TEST_PLAN_TEMPLATES_CRD =
-      "META-INF/fabric8/testplantemplates.sushigumi.dev-v1.yaml";
+      "META-INF/fabric8/testplantemplates.sushigumi.dev-v1.yml";
   public static final String TEST_TEMPLATE = "test-templates/1.yaml";
   public static final String TEST_PLAN_TEMPLATE = "test-plan-templates/1.yaml";
 

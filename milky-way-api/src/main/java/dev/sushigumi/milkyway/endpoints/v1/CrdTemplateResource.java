@@ -1,6 +1,7 @@
 package dev.sushigumi.milkyway.endpoints.v1;
 
 import dev.sushigumi.milkyway.kubernetes.api.model.TestPlanTemplate;
+import dev.sushigumi.milkyway.operations.read.GetTestPlanTemplateOperation;
 import dev.sushigumi.milkyway.operations.read.GetTestPlanTemplatesOperation;
 import dev.sushigumi.milkyway.operations.read.GetTestTemplateOperation;
 import dev.sushigumi.milkyway.services.OperationExecutorService;
@@ -22,6 +23,12 @@ public class CrdTemplateResource {
   @GET
   public List<TestPlanTemplate> getTestPlanTemplates() {
     return executorService.execute(new GetTestPlanTemplatesOperation());
+  }
+
+  @Path("/plans/{name}")
+  @GET
+  public String getTestPlanTemplate(@PathParam("name") String name) {
+    return Serialization.asYaml(executorService.execute(new GetTestPlanTemplateOperation(name)));
   }
 
   @Path("/tests/{name}")

@@ -49,5 +49,7 @@ public class CreateTestPlanOperation extends Operation<TestPlan> {
     testPlan.testIds = testIds;
 
     testPlanRepository.persist(testPlan);
+
+    result = testPlan;
   }
 }

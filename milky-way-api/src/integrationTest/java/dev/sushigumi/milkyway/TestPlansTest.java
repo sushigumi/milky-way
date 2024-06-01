@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 @QuarkusIntegrationTest
 @QuarkusTestResource(MongoTestResourceManager.class)
 @QuarkusTestResource(KubernetesTestResourceManager.class)
-public class TestPlanResourceTest {
+public class TestPlansTest {
   @Test
   void getTestPlans() {
     Response response =
@@ -46,7 +46,7 @@ public class TestPlanResourceTest {
   @Test
   void createAndDeleteTestPlans() throws JsonProcessingException {
     // Create a new test plan
-    final var request = new CreateTestPlanRequest("asdf", "test plan new");
+    final var request = new CreateTestPlanRequest("test-plan-template-1", "test plan new");
     final String body = new ObjectMapper().writeValueAsString(request);
     Response response =
         given()
@@ -65,6 +65,6 @@ public class TestPlanResourceTest {
 
     // Delete the test plan. The second call will fail because it doesn't exist anymore.
     when().delete("/api/v1/plans/" + testPlanId).then().assertThat().statusCode(204);
-    when().delete("/api/v1/plans/" + testPlanId).then().assertThat().statusCode(400);
+    when().delete("/api/v1/plans/" + testPlanId).then().assertThat().statusCode(404);
   }
 }
