@@ -7,12 +7,15 @@ import java.io.Serializable;
 public class TestPlanTemplateSpec implements Serializable {
   private final String description;
   @Required private final String[] testTemplates;
+  @Required private final String commitHash;
 
   public TestPlanTemplateSpec(
       @JsonProperty("description") String description,
-      @JsonProperty("testTemplates") String[] testTemplates) {
+      @JsonProperty("testTemplates") String[] testTemplates,
+      @JsonProperty("commitHash") String commitHash) {
     this.description = description;
     this.testTemplates = testTemplates;
+    this.commitHash = commitHash;
   }
 
   public String getDescription() {
@@ -21,5 +24,9 @@ public class TestPlanTemplateSpec implements Serializable {
 
   public String[] getTestTemplates() {
     return testTemplates;
+  }
+
+  public String getCommitHash() {
+    return commitHash;
   }
 }

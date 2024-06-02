@@ -8,15 +8,15 @@ import java.io.Serializable;
 public class TestTemplateSpec implements Serializable {
   @Required private final String group;
   @Required private final Container container;
-  private final String[] requiredEnvVars;
+  @Required private final String commitHash;
 
   public TestTemplateSpec(
       @JsonProperty("group") String group,
       @JsonProperty("container") Container container,
-      @JsonProperty("requiredEnvVars") String[] requiredEnvVars) {
+      @JsonProperty("commitHash") String commitHash) {
     this.group = group;
     this.container = container;
-    this.requiredEnvVars = requiredEnvVars;
+    this.commitHash = commitHash;
   }
 
   public String getGroup() {
@@ -27,7 +27,7 @@ public class TestTemplateSpec implements Serializable {
     return container;
   }
 
-  public String[] getRequiredEnvVars() {
-    return requiredEnvVars;
+  public String getCommitHash() {
+    return commitHash;
   }
 }

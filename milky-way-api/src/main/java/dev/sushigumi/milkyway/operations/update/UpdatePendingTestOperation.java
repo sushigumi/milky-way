@@ -10,15 +10,31 @@ import dev.sushigumi.milkyway.database.entities.TestStatus;
 import dev.sushigumi.milkyway.operations.Operation;
 import dev.sushigumi.milkyway.operations.OperationContext;
 import jakarta.ws.rs.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import org.bson.conversions.Bson;
 
-public class UpdateTestStatusOperation extends Operation<Test> {
+public class UpdatePendingTestOperation extends Operation<Test> {
   private final String testId;
   private final TestStatus newStatus;
+  private final String resourceCommitHash;
 
-  public UpdateTestStatusOperation(String testId, TestStatus newStatus) {
+  public UpdatePendingTestOperation(
+      String testId, TestStatus newStatus, String resourceCommitHash) {
     this.testId = testId;
     this.newStatus = newStatus;
+    this.resourceCommitHash = resourceCommitHash;
+  }
+
+  private List<Bson> getUpdates() {
+    final List<Bson> updates = new ArrayList<>();
+    updates.add(Updates.set("status", newStatus.name()));
+
+    if (resourceCommitHash != null) {
+      updates.add(Updates.set("commitHash", resourceCommitHash));
+    }
+
+    return updates;
   }
 
   @Override
@@ -26,7 +42,8 @@ public class UpdateTestStatusOperation extends Operation<Test> {
     final TestRepository testRepository = context.getTestRepository();
     final Bson filter =
         Filters.and(Filters.eq("_id", testId), Filters.eq("status", TestStatus.PENDING));
-    final Bson updates = Updates.set("status", newStatus.name());
+    final Bson updates = Updates.combine(getUpdates());
+
     final FindOneAndUpdateOptions options =
         new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER);
     final Test newTest =

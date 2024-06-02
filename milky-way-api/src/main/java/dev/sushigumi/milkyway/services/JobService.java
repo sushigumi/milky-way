@@ -1,7 +1,7 @@
 package dev.sushigumi.milkyway.services;
 
 import dev.sushigumi.milkyway.database.entities.TestStatus;
-import dev.sushigumi.milkyway.operations.update.UpdateTestStatusOperation;
+import dev.sushigumi.milkyway.operations.update.UpdateRunningTestOperation;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobStatus;
@@ -82,9 +82,9 @@ public class JobService {
 
       // Update the status of the test.
       if (failedPods > 0) {
-        executorService.execute(new UpdateTestStatusOperation(testId, TestStatus.FAILED));
+        executorService.execute(new UpdateRunningTestOperation(testId, TestStatus.FAILED));
       } else {
-        executorService.execute(new UpdateTestStatusOperation(testId, TestStatus.SUCCESS));
+        executorService.execute(new UpdateRunningTestOperation(testId, TestStatus.SUCCESS));
       }
     }
 

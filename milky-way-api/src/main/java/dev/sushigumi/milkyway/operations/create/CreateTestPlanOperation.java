@@ -35,6 +35,7 @@ public class CreateTestPlanOperation extends Operation<TestPlan> {
 
     List<ObjectId> testIds = new ArrayList<>(template.getSpec().getTestTemplates().length);
     for (var testTemplateName : template.getSpec().getTestTemplates()) {
+      // Don't set the commit hash first. The commit hash will only be known on test execution.
       final var test = new Test();
       test.name = testTemplateName;
       test.status = TestStatus.PENDING;

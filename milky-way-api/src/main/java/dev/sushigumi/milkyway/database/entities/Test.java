@@ -10,4 +10,5 @@ public class Test {
   public ObjectId id;
   public String name;
   public TestStatus status;
+  public String commitHash;
 }
